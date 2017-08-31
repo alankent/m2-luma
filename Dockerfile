@@ -14,18 +14,16 @@ ADD mysql-install.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/mysql-install.sh
 RUN /usr/local/bin/mysql-install.sh
 
+ADD mysqld.cnf /etc/mysql/mysql.conf.d
+
+ADD m3.sh /tmp
+
 # Initialize server and create the 'magento2' database
 ADD mysql-init.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/mysql-init.sh
 RUN /usr/local/bin/mysql-init.sh mysqld
 
-RUN ls -la /var/lib/mysql
-RUN cat /var/log/mysql/error.log
-
-RUN echo =============================
-RUN service mysql start && service mysql stop
-RUN echo =============================
-RUN service mysql start && mysql -e 'show tables;' && service mysql stop
+#RUN bash -x /tmp/m3.sh mysqld
 
 #RUN echo "" >> /etc/supervisord.conf
 #RUN echo "" >> /etc/supervisord.conf

@@ -1,11 +1,13 @@
 #!/bin/sh
 
+export DEBIAN_FRONTEND=noninteractive
+set -x
 
 # From https://github.com/docker-library/mysql
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-groupadd -r mysql
-useradd -r -g mysql mysql
+#AJK groupadd -r mysql
+#AJK useradd -r -g mysql mysql
 
 # add gosu for easy step-down from root
 GOSU_VERSION=1.7
@@ -20,7 +22,7 @@ rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc
 chmod +x /usr/local/bin/gosu
 gosu nobody true 
 
-mkdir /docker-entrypoint-initdb.d
+#AJK mkdir /docker-entrypoint-initdb.d
 
 # FATAL ERROR: please install the following Perl modules before executing /usr/local/mysql/scripts/mysql_install_db:
 # File::Basename

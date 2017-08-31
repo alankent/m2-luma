@@ -2,7 +2,7 @@
 
 set -x
 
-cd /magento2
+cd /var/www/magento2
 
 # Install Magento and load sample data.
 bin/magento setup:install --backend-frontname=admin \

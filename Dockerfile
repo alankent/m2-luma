@@ -3,8 +3,6 @@ MAINTAINER Alan Kent <alan.james.kent@gmail.com>
 
 ########### MySQL Setup ###########
 
-VOLUME /var/lib/mysql
-
 ENV MYSQL_ROOT_PASSWORD=root
 ENV MYSQL_DATABASE=magento2
 ENV MYSQL_USER=magento2
@@ -21,6 +19,13 @@ ADD mysql-init.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/mysql-init.sh
 RUN /usr/local/bin/mysql-init.sh mysqld
 
+RUN ls -la /var/lib/mysql
+RUN cat /var/log/mysql/error.log
+
+RUN echo =============================
+RUN service mysql start && service mysql stop
+RUN echo =============================
+RUN service mysql start && mysql -e 'show tables;' && service mysql stop
 
 #RUN echo "" >> /etc/supervisord.conf
 #RUN echo "" >> /etc/supervisord.conf

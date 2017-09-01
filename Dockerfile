@@ -27,7 +27,7 @@ RUN /usr/local/bin/mysql-init.sh mysqld
 
 # Install the source code.
 RUN rm -rf /var/www/magento2
-ADD Magento-CE-2.1.8_sample_data-2017-08-09-08-33-36.tar.gz /var/www/magento2
+ADD Magento-CE-2.1.0_sample_data-2016-06-23-02-34-07.tar.gz /var/www/magento2
 
 # Load the sample database
 ADD magento2-install.sh /usr/local/bin
@@ -67,4 +67,5 @@ RUN sudo -u magento2 mkdir -p /var/www/magento2/var/log/ \
 # Add mysqld to boot up sequence
 ADD mysql-start.sh /usr/local/bin/mysql-start.sh
 RUN chmod +x /usr/local/bin/mysql-start.sh \
- && sed -i /usr/local/bin/entrypoint.sh -e "1a\\\n/usr/local/bin/mysql-start.sh\n"
+ && sed -i /usr/local/bin/entrypoint.sh -e "1a\\\n/usr/local/bin/mysql-start.sh\n" \
+ && sed -i /usr/local/bin/entrypoint.sh -e "1a\\\n/usr/local/bin/magento-version.sh\n"

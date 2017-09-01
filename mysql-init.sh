@@ -42,8 +42,6 @@ SOCKET="$(_get_config 'socket' "$@")"
 "$@" --skip-networking --socket="${SOCKET}" &
 pid="$!"
 
-echo ============= $pid ================
-
 mysql=( mysql --protocol=socket -uroot -hlocalhost --socket="${SOCKET}" )
 
 for i in {30..0}; do
@@ -51,8 +49,6 @@ for i in {30..0}; do
 		break
 	fi
 	echo 'MySQL init process in progress...'
-echo ============= $pid ================
-	tail -100 /var/log/mysql/error.log
 	sleep 1
 done
 if [ "$i" = 0 ]; then
@@ -67,9 +63,6 @@ fi
 
 # default root to listen for connections from anywhere
 MYSQL_ROOT_HOST=%
-
-echo ======= "${mysql[@]}" =======
-ps -ef
 
 "${mysql[@]}" <<-EOSQL
 -- What's done in this file shouldn't be replicated
@@ -115,30 +108,3 @@ echo
 echo 'MySQL init process done. Ready for start up.'
 echo
 
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo +++ Starting mysqld server #1
-"$@" &
-pid="$!"
-sleep 3
-echo ========================= "${mysql[@]}"
-echo 'FLUSH PRIVILEGES ;' | "${mysql[@]}"
-if ! kill -s TERM "$pid" || ! wait "$pid"; then
-	echo >&2 'MySQL init process failed.'
-	exit 1
-fi
-sleep 2
-	tail -100 /var/log/mysql/error.log
-
-echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo +++ Starting mysqld server #2
-"$@" &
-pid="$!"
-sleep 3
-echo ========================= "${mysql[@]}"
-echo 'FLUSH PRIVILEGES ;' | "${mysql[@]}"
-if ! kill -s TERM "$pid" || ! wait "$pid"; then
-	echo >&2 'MySQL init process failed.'
-	exit 1
-fi
-sleep 2
-	tail -100 /var/log/mysql/error.log

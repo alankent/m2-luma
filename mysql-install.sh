@@ -5,14 +5,12 @@ set -x
 
 # From https://github.com/docker-library/mysql
 
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-#AJK groupadd -r mysql
-#AJK useradd -r -g mysql mysql
-
 # add gosu for easy step-down from root
 GOSU_VERSION=1.7
 set -x
-apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/*
+apt-get update
+apt-get install -y --no-install-recommends ca-certificates wget
+rm -rf /var/lib/apt/lists/*
 wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)"
 wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc"
 export GNUPGHOME="$(mktemp -d)"
@@ -51,8 +49,11 @@ echo "deb http://repo.mysql.com/apt/debian/ jessie mysql-${MYSQL_MAJOR}" > /etc/
     echo mysql-community-server mysql-community-server/re-root-pass password '';
     echo mysql-community-server mysql-community-server/remove-test-db select false;
     } | debconf-set-selections
-apt-get update && apt-get install -y mysql-server="${MYSQL_VERSION}" && rm -rf /var/lib/apt/lists/*
-rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql /var/run/mysqld
+apt-get update
+apt-get install -y mysql-server="${MYSQL_VERSION}"
+rm -rf /var/lib/apt/lists/*
+rm -rf /var/lib/mysql
+mkdir -p /var/lib/mysql /var/run/mysqld
 chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 # ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
 chmod 777 /var/run/mysqld
@@ -61,18 +62,4 @@ chmod 777 /var/run/mysqld
 # don't reverse lookup hostnames, they are usually another container
 sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/mysql.conf.d/mysqld.cnf
 echo '[mysqld]\nskip-host-cache\nskip-name-resolve' > /etc/mysql/conf.d/docker.cnf 
-
-exit 0
-
-
-# # add our user and group first to make sure their IDs get assigned
-# # consistently, regardless of whatever dependencies get added
-# groupadd -r mysql
-# useradd -r -g mysql mysql
-# mkdir /docker-entrypoint-initdb.d
-# apt-get update
-# apt-get install -y mysql-server-5.7
-# sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/my.cnf
-# mv /tmp/my.cnf /etc/mysql/my.cnf
-# mysql_secure_installation
 

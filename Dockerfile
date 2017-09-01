@@ -16,21 +16,10 @@ RUN /usr/local/bin/mysql-install.sh
 
 ADD mysqld.cnf /etc/mysql/mysql.conf.d
 
-ADD m3.sh /tmp
-
 # Initialize server and create the 'magento2' database
 ADD mysql-init.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/mysql-init.sh
 RUN /usr/local/bin/mysql-init.sh mysqld
-
-#RUN bash -x /tmp/m3.sh mysqld
-
-#RUN echo "" >> /etc/supervisord.conf
-#RUN echo "" >> /etc/supervisord.conf
-#RUN echo "[program:mysql]" >> /etc/supervisord.conf
-#RUN echo "command=/usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/sbin/mysqld" >> /etc/supervisord.conf
-#RUN echo "autorestart=true" >> /etc/supervisord.conf
-#RUN echo "user=mysql" >> /etc/supervisord.conf
 
 
 ########### Magento Setup ########### 
